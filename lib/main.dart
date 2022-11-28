@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Syncfusion DataGrid Demo',
+      title: 'Tickets',
       theme:
           ThemeData(primarySwatch: Colors.blue, brightness: Brightness.light),
       home: JsonDataGrid(),
@@ -32,7 +32,7 @@ class _JsonDataGridState extends State<JsonDataGrid> {
 
   Future generateProductList() async {
     var response = await http.get(Uri.parse(
-        'http://192.168.1.110:5001/api/pesaje'));
+        'http://192.168.1.71:5001/api/pesaje'));
     var list = json.decode(response.body).cast<Map<String, dynamic>>();
     productlist =
         await list.map<_Product>((json) => _Product.fromJson(json)).toList();
@@ -82,26 +82,14 @@ class _JsonDataGridState extends State<JsonDataGrid> {
           ),
         ),
       ),
+
       GridColumn(
         columnName: '',
-        width: 100,
-        label: Container(
-          padding: EdgeInsets.all(8),
-          alignment: Alignment.centerRight,
-          child: Text(
-            '',
-            overflow: TextOverflow.clip,
-            softWrap: true,
-          ),
-        ),
-      ),
-      GridColumn(
-        columnName: 'freight',
         width: 70,
         label: Container(
           padding: EdgeInsets.all(8),
           alignment: Alignment.centerLeft,
-          child: Text('Freight'),
+          child: Text(''),
         ),
       )
     ]);
@@ -117,7 +105,9 @@ class _JsonDataGridState extends State<JsonDataGrid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Flutter DataGrid Sample'),
+        title: Text('TICKETS'),
+        centerTitle: true,
+
       ),
       body: Container(
           child: FutureBuilder(
@@ -145,7 +135,6 @@ class _Product {
         evidencia: json['evidencia'],
         sucursal: json['sucursal'],
         proveedor: json['proveedor'],
-        reporte: json['reporte'],
 );
 
   }
@@ -157,21 +146,15 @@ class _Product {
          this.evidencia,
          this.sucursal,
          this.proveedor,
-         this.materialNavigation,
-        this.proveedorNavigation,
-        this.sucursalNavigation,
-        this.reporte
       });
-  int id;
-    int material;
+
+    int id;
+    String material;
     int pesoneto;
     String evidencia;
-    int sucursal;
-    int proveedor;
-    dynamic materialNavigation;
-    dynamic proveedorNavigation;
-    dynamic sucursalNavigation;
-    List<dynamic> reporte;
+    String sucursal;
+    String proveedor;
+
 }
 
 class _JsonDataGridSource extends DataGridSource {
@@ -185,14 +168,12 @@ class _JsonDataGridSource extends DataGridSource {
   void buildDataGridRow() {
     dataGridRows = productlist.map<DataGridRow>((dataGridRow) {
       return DataGridRow(cells: [
-        DataGridCell<int>(columnName: 'Proveedor', value: dataGridRow.id),
+        DataGridCell<String>(columnName: 'Proveedor', value: dataGridRow.proveedor),
         DataGridCell<String>(
-            columnName: 'Material', value: dataGridRow.evidencia),
+            columnName: 'Material', value: dataGridRow.material),
         DataGridCell<int>(
-            columnName: 'Peso', value: dataGridRow.id),
-        DataGridCell<int>(
-            columnName: '', value: dataGridRow.id),
-        DataGridCell<String>(columnName: 'freight', value: dataGridRow.evidencia),
+            columnName: 'Peso', value: dataGridRow.pesoneto),
+        DataGridCell<String>(columnName: '', value: dataGridRow.evidencia),
       ]);
     }).toList(growable: false);
   }
@@ -235,14 +216,27 @@ class _JsonDataGridSource extends DataGridSource {
           overflow: TextOverflow.ellipsis,
         ),
       ),
-      Container(
-        alignment: Alignment.centerRight,
-        padding: EdgeInsets.all(8.0),
-        child: Text(
-          row.getCells()[4].value.toString(),
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
     ]);
+  }
+   Widget _bottonPhoto() {
+    return StreamBuilder(
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+      final ButtonStyle raisedButtonStyle = ElevatedButton.styleFrom(
+        backgroundColor: const Color.fromARGB(255, 23, 182, 103),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(3)),
+        ),
+      );
+      return ElevatedButton(
+        style: raisedButtonStyle,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => MyApp()),
+          );
+        },
+        child: const Icon(Icons.add_a_photo),
+      );
+    });
   }
 }
